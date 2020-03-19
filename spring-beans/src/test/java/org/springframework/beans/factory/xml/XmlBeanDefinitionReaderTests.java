@@ -37,6 +37,8 @@ import static org.junit.Assert.*;
  * @author Rick Evans
  * @author Juergen Hoeller
  * @author Sam Brannen
+ * 
+ * 解析 XML 配置文件成对应的 BeanDefinition 们的流程
  */
 public class XmlBeanDefinitionReaderTests {
 
