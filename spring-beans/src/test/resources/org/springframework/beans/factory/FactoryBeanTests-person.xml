@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "https://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<beans>
+
+	<bean id="person" class="org.springframework.tests.Person">
+		<property name="name"><value>张三</value></property>
+		<property name="age"><value>25</value></property>
+<!-- 		<property name="god" ref="god"/> -->
+	</bean>
+	
+<!-- 	<bean id="god" class="org.springframework.tests.God"> -->
+<!-- 		<property name="id"><value>1</value></property> -->
+<!-- 		<property name="person" ref="person"/> -->
+<!-- 	</bean> -->
+
+</beans>	
+

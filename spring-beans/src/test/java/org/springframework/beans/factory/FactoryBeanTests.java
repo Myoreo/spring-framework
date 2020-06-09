@@ -26,8 +26,11 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
+import org.springframework.tests.God;
+import org.springframework.tests.Person;
 import org.springframework.util.Assert;
 
 import static org.junit.Assert.*;
@@ -45,7 +48,31 @@ public class FactoryBeanTests {
 	private static final Resource WITH_AUTOWIRING_CONTEXT = qualifiedResource(CLASS, "withAutowiring.xml");
 	private static final Resource ABSTRACT_CONTEXT = qualifiedResource(CLASS, "abstract.xml");
 	private static final Resource CIRCULAR_CONTEXT = qualifiedResource(CLASS, "circular.xml");
+	
 
+	
+	@Test
+	public void loadBeanDefinition() {
+		ClassPathResource resource = new ClassPathResource("FactoryBeanTests-person.xml", FactoryBeanTests.class);
+		DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
+		XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(factory);
+		reader.loadBeanDefinitions(resource);
+		Person person = factory.getBean(Person.class);
+		
+//		God god = factory.getBean(God.class);
+
+//		System.out.println(god == person.getGod());
+
+		System.out.println(person);
+	}
+	
+	@Test
+	public void testSimple() {
+		DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
+		new XmlBeanDefinitionReader(factory).loadBeanDefinitions(qualifiedResource(CLASS, "person.xml"));
+		Person person = factory.getBean(Person.class);
+		System.out.println(person);
+	}
 
 	@Test
 	public void testFactoryBeanReturnsNull() throws Exception {

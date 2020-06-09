@@ -23,6 +23,7 @@ import static org.junit.Assert.*;
 /**
  * @author Mark Fisher
  * @author Chris Beams
+ * bean生命周期
  */
 public class ApplicationContextLifecycleTests {
 

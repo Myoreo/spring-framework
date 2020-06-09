@@ -16,6 +16,7 @@
 
 package org.springframework.beans.factory.support;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -71,11 +72,13 @@ import org.springframework.util.StringUtils;
 public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements SingletonBeanRegistry {
 
 	/** Cache of singleton objects: bean name to bean instance.
+	 * 一级缓存
 	 * 存放的是单例 bean 的映射。
 	 * 对应关系为 bean name --> bean instance */
 	private final Map<String, Object> singletonObjects = new ConcurrentHashMap<>(256);
 
 	/** Cache of singleton factories: bean name to ObjectFactory.
+	 * 三级缓存
 	 * 存放的是 ObjectFactory，可以理解为创建单例 bean 的 factory 。
 	 * 对应关系是 bean name --> ObjectFactory
 	 *  */
@@ -84,10 +87,10 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	
 	/**
 	 * Cache of early singleton objects: bean name to bean instance.
-	 *
+	 * 二级缓存
 	 * 存放的是早期的 bean，对应关系也是 bean name --> bean instance。
 	 *
-	 * 它与 {@link #singletonFactories} 区别在于 earlySingletonObjects 中存放的 bean 不一定是完整。
+	 * 它与 {@link #singletonObjects} 区别在于 earlySingletonObjects 中存放的 bean 不一定是完整。
 	 *
 	 * 从 {@link #getSingleton(String)} 方法中，我们可以了解，bean 在创建过程中就已经加入到 earlySingletonObjects 中了。
 	 * 所以当在 bean 的创建过程中，就可以通过 getBean() 方法获取。
@@ -196,6 +199,12 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	protected Object getSingleton(String beanName, boolean allowEarlyReference) {
 		// 从单例缓存中加载Bean
 		Object singletonObject = this.singletonObjects.get(beanName);
+		logger.warn(">>>>>>>>>>> get singleton 【" + beanName + "】from cache:" + singletonObject);
+//		logger.warn("singletonObjects:" + this.singletonObjects);
+//		logger.warn("earlySingletonObjects:" + this.earlySingletonObjects);
+//		logger.warn("singletonFactories:" + this.singletonFactories);
+//		logger.warn("singletonsCurrentlyInCreation:" + this.singletonsCurrentlyInCreation);
+//		logger.warn("\n");
 		// 缓存中的 bean 为空，且当前 bean 正在创建
 		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
 			// 加锁
@@ -233,8 +242,12 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 */
 	public Object getSingleton(String beanName, ObjectFactory<?> singletonFactory) {
 		Assert.notNull(beanName, "Bean name must not be null");
+		// 全局加锁
 		synchronized (this.singletonObjects) {
+			// <1> 从缓存中检查一遍
+	        // 因为 singleton 模式其实就是复用已经创建的 bean 所以这步骤必须检查
 			Object singletonObject = this.singletonObjects.get(beanName);
+			//  为空，开始加载过程
 			if (singletonObject == null) {
 				if (this.singletonsCurrentlyInDestruction) {
 					throw new BeanCreationNotAllowedException(beanName,
@@ -251,6 +264,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					this.suppressedExceptions = new LinkedHashSet<>();
 				}
 				try {
+					// ObjectFactory是个函数式接口,这里其实是调用 AbstractBeanFactory.doGetBean()的createBean() 方法
 					singletonObject = singletonFactory.getObject();
 					newSingleton = true;
 				}

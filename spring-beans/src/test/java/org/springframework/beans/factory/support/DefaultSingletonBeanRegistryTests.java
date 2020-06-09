@@ -34,6 +34,7 @@ public class DefaultSingletonBeanRegistryTests {
 
 	@Test
 	public void testSingletons() {
+		
 		DefaultSingletonBeanRegistry beanRegistry = new DefaultSingletonBeanRegistry();
 
 		TestBean tb = new TestBean();

@@ -33,7 +33,8 @@ public abstract class TestResourceUtils {
 	 * <p>Intended for use loading context configuration XML files within JUnit tests.
 	 */
 	public static ClassPathResource qualifiedResource(Class<?> clazz, String resourceSuffix) {
-		return new ClassPathResource(String.format("%s-%s", clazz.getSimpleName(), resourceSuffix), clazz);
+		String path = String.format("%s-%s", clazz.getSimpleName(), resourceSuffix);
+		return new ClassPathResource(path, clazz);
 	}
 
 }

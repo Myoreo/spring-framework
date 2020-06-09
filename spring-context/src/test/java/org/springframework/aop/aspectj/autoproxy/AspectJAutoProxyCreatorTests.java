@@ -69,6 +69,7 @@ import static org.junit.Assert.*;
  * @author Juergen Hoeller
  * @author Chris Beams
  * @author Sam Brannen
+ * AOP测试类
  */
 public class AspectJAutoProxyCreatorTests {
 
